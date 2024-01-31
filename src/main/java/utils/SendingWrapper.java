@@ -1,15 +1,20 @@
 package utils;
 
 import commands.Command;
+import commands.CommandName;
+import commands.CommandSetController;
+import exceptions.InvalidParameterException;
+import server.CollectionController;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 
-public class Box<T> implements Serializable {
-    private Command command;
-    private T parameter;
+public  class SendingWrapper<T> implements Serializable {
+    private  Command command;
+    private  T parameter;
 
-    public Box(Command command, T parameter) {
+    public SendingWrapper(Command command, T parameter) {
         this.command = command;
         this.parameter = parameter;
     }
@@ -29,4 +34,6 @@ public class Box<T> implements Serializable {
     public void setCommand(Command command) {
         this.command = command;
     }
+
+
 }

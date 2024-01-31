@@ -1,13 +1,11 @@
 package client;
 
-import commands.CommandName;
-import exceptions.InvalidCommandException;
+import commands.CommandSetController;
 import exceptions.InvalidParameterException;
 import server.CollectionController;
-import commands.CommandSetController;
-import utils.Box;
-import utils.ConverterBytes;
 import utils.GenericsToTypeConverter;
+import utils.SendingWrapper;
+import utils.ConverterBytes;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -24,23 +22,24 @@ public class UDPClient {
         try (DatagramSocket clientSocket = new DatagramSocket()) {
             InetAddress serverAddress = InetAddress.getByName("localhost");
             byte[] sendingDataBuffer;
+
             byte[] receivingDataBuffer = new byte[1024];
             Scanner scanner = new Scanner(System.in);
+            GenericsToTypeConverter genericsToTypeConverter = new GenericsToTypeConverter(CommandSetController.getInstance(), CollectionController.getInstance());
             while (scanner.hasNext()) {
                 String lineCommand = scanner.nextLine().trim();
                 try {
-                    Box<?> box = getBox(lineCommand);
-                    sendingDataBuffer = ConverterBytes.convertObjectToBytes(box);
+                    SendingWrapper<?> sendingWrapper = GenericsToTypeConverter.getSendingWrapper(lineCommand);
+                    sendingDataBuffer = ConverterBytes.convertObjectToBytes(sendingWrapper);
                     DatagramPacket outputPacket = new DatagramPacket(sendingDataBuffer, sendingDataBuffer.length, serverAddress, SERVER_PORT);
 
                     clientSocket.send(outputPacket);
 
                     DatagramPacket receivingPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
                     clientSocket.receive(receivingPacket);
-
                     String receivedData = new String(receivingPacket.getData(), receivingPacket.getOffset(), receivingPacket.getLength());
                     System.out.println(receivedData);
-                } catch (InvalidCommandException | InvalidParameterException e) {
+                } catch (IllegalArgumentException | InvalidParameterException e) {
                     System.out.println(e.getMessage());
                 }
 
@@ -52,18 +51,5 @@ public class UDPClient {
 
     }
 
-    private static Box<?> getBox(String lineCommand) throws InvalidCommandException, InvalidParameterException {
-        String[] lineInputs = lineCommand.split(" ");
-        // TODO: process IllegalArgumentException
-        CommandName commandName = CommandName.valueOf(lineInputs[0].toUpperCase());
-        String[] parameters = Arrays.copyOfRange(lineInputs, 1, lineInputs.length);
-        GenericsToTypeConverter converter = new GenericsToTypeConverter();
-        try {
-            return converter.getSendingItem(CommandSetController.getInstance(), CollectionController.getInstance(), commandName, parameters);
-        } catch (InvalidCommandException | InvalidParameterException e) {
-            throw e;
 
-        }
-
-    }
 }

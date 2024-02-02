@@ -1,30 +1,25 @@
 package utils;
 
 import commands.Command;
-import commands.CommandName;
-import commands.CommandSetController;
-import exceptions.InvalidParameterException;
-import server.CollectionController;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 
-public  class SendingWrapper<T> implements Serializable {
+public  class SendingWrapper implements Serializable {
     private  Command command;
-    private  T parameter;
+    private  String[] params;
 
-    public SendingWrapper(Command command, T parameter) {
+    public SendingWrapper(Command command, String[] params) {
         this.command = command;
-        this.parameter = parameter;
+        this.params = params;
     }
 
-    public T getParameter() {
-        return parameter;
+    public String[] getParams() {
+        return params;
     }
 
-    public void setParameter(T parameter) {
-        this.parameter = parameter;
+    public void setParams(String[] params) {
+        this.params = params;
     }
 
     public Command getCommand() {

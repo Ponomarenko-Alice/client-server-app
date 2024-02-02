@@ -5,11 +5,15 @@ public interface Command {
         return "";
     }
 
-    default void execute() {
+    default String execute() {
+        return "";
     }
 
     default CommandName getName() {
         return CommandName.NONE;
+    }
+
+    default void setParams(String[] params) {
     }
 
 

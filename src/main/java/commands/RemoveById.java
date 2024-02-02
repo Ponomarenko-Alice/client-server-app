@@ -17,19 +17,32 @@ public class RemoveById implements Command, Serializable {
         this.params = params;
     }
 
+    public String getDescription() {
+        return "Remove product by id";
+    }
+
+
+    public void setParams(String[] params) {
+        this.params = params;
+    }
+
     public CommandName getName() {
         return name;
     }
 
     @Override
-    public void execute() {
-        for (Product product : collectionController.getCollection()) {
-            if (product.getId().equals(Integer.parseInt(params[0]))) {
-                collectionController.getCollection().remove(product);
-                System.out.println("Product with id " + product.getId().toString() + " removed");
-                break;
+    public String execute() throws NumberFormatException {
+        try {
+            for (Product product : collectionController.getCollection()) {
+                if (product.getId().equals(Integer.parseInt(params[0]))) {
+                    collectionController.getCollection().remove(product);
+                    return "Product with id " + product.getId().toString() + " removed";
+                }
             }
+            return "No products in list";
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException(e.getMessage());
         }
-        System.out.println("No product with this id");
+
     }
 }

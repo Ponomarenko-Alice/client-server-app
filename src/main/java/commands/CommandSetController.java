@@ -10,23 +10,22 @@ public final class CommandSetController implements Serializable {
 
     private static CommandSetController INSTANCE;
 
-    private CommandSetController() {
+    private CommandSetController(CollectionController collectionController) {
+        commandSet.put("info", new InfoCommand(this));
+        commandSet.put("remove_by_id", new RemoveById(collectionController));
+
     }
 
     public static CommandSetController getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new CommandSetController();
+            INSTANCE = new CommandSetController(CollectionController.getInstance());
         }
         return INSTANCE;
     }
 
     private final HashMap<String, Command> commandSet = new HashMap<>();
 
-    public CommandSetController(CollectionController collectionController) {
-        commandSet.put("info", new InfoCommand(this));
-        commandSet.put("remove_by_id", new RemoveById(collectionController));
 
-    }
 
     public HashMap<String, Command> getCommandSet() {
         return this.commandSet;

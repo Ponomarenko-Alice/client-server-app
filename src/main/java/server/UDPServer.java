@@ -1,17 +1,21 @@
 package server;
 
+import commands.Command;
 import commands.CommandName;
+import org.slf4j.LoggerFactory;
 import utils.SendingWrapper;
 import utils.ConverterBytes;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Arrays;
+import org.slf4j.Logger;
 
 public class UDPServer {
+
+    private static final Logger logger = LoggerFactory.getLogger(UDPServer.class);
     public static void main(String[] args) {
+        logger.info("server is running");
         try (DatagramSocket serverSocket = new DatagramSocket(8000)) {
             int x = 0;
             while (x < 100) {
@@ -22,26 +26,30 @@ public class UDPServer {
                 serverSocket.receive(inputPacket);
 
                 receivingDataBuffer = inputPacket.getData();
-                SendingWrapper<?> recievedSendingWrapper = (SendingWrapper<?>) ConverterBytes.convertBytesToObject(receivingDataBuffer);
+                SendingWrapper recievedSendingWrapper = (SendingWrapper) ConverterBytes.convertBytesToObject(receivingDataBuffer);
                 CommandName commandName = recievedSendingWrapper.getCommand().getName();
-                System.out.println(commandName + " is received");
+                Command command = recievedSendingWrapper.getCommand();
+                command.setParams(recievedSendingWrapper.getParams());
 
-                sendingDataBuffer = commandName.getCommandName().toUpperCase().getBytes();
+                logger.info(commandName.getCommandName() + "is received");
 
-                InetAddress address = inputPacket.getAddress();
-                int senderPort = inputPacket.getPort();
+                try {
+                    sendingDataBuffer = command.execute().getBytes();
+                    InetAddress address = inputPacket.getAddress();
+                    int senderPort = inputPacket.getPort();
 
-                DatagramPacket outputPacket = new DatagramPacket(sendingDataBuffer,
-                        sendingDataBuffer.length, address, senderPort);
-                serverSocket.send(outputPacket);
+                    DatagramPacket outputPacket = new DatagramPacket(sendingDataBuffer,
+                            sendingDataBuffer.length, address, senderPort);
+                    serverSocket.send(outputPacket);
+                } catch (NumberFormatException e) {
+                    logger.warn(e.getMessage());
+                }
                 x++;
-
             }
         } catch (IOException e) {
-            System.out.println("IO server error:");
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            logger.warn("IO server error:" + e.getMessage());
         } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+            logger.warn(e.getMessage());
         }
     }
 }

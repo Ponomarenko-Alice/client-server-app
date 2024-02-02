@@ -2,7 +2,10 @@ package commands;
 
 public enum CommandName {
 
-    REMOVE_BY_ID("remove_by_id"), INFO("info"), NONE("none");
+    REMOVE_BY_ID("remove_by_id"),
+    INFO("info"),
+    ADD("add"),
+    NONE("none");
 
     private final String commandName;
 

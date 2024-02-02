@@ -27,7 +27,6 @@ public class GenericsToTypeConverter {
         try {
             CommandName commandName = CommandName.valueOf(lineInputs[0].toUpperCase());
             String[] parameters = Arrays.copyOfRange(lineInputs, 1, lineInputs.length);
-            SendingWrapper wrapper = getSendingItem(commandName, parameters);
             return getSendingItem(commandName, parameters);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Not found required command");
@@ -37,7 +36,7 @@ public class GenericsToTypeConverter {
     }
 
     private static SendingWrapper getSendingItem(CommandName commandName, String... parameter)
-            throws InvalidParameterException, IllegalArgumentException {
+            throws InvalidParameterException {
         switch (commandName) {
             case REMOVE_BY_ID: //id
                 RemoveById removeById = new RemoveById(collectionController, parameter);
@@ -50,11 +49,8 @@ public class GenericsToTypeConverter {
             case INFO: //no parameter
                 InfoCommand infoCommand = new InfoCommand(commandSetController);
                 return new SendingWrapper(infoCommand, null);
-
-            default:
-                logger.warn("in getSendingItem function: not found required command name");
-                return null;
         }
+        return null;
     }
 }
 

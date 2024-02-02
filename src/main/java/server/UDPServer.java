@@ -12,7 +12,7 @@ import java.net.InetAddress;
 import org.slf4j.Logger;
 
 public class UDPServer {
-
+    //TODO: delete general exceptions from class
     private static final Logger logger = LoggerFactory.getLogger(UDPServer.class);
     public static void main(String[] args) {
         logger.info("server is running");
@@ -26,6 +26,7 @@ public class UDPServer {
                 serverSocket.receive(inputPacket);
 
                 receivingDataBuffer = inputPacket.getData();
+                logger.info("data from datagramPacket received");
                 SendingWrapper recievedSendingWrapper = (SendingWrapper) ConverterBytes.convertBytesToObject(receivingDataBuffer);
                 CommandName commandName = recievedSendingWrapper.getCommand().getName();
                 Command command = recievedSendingWrapper.getCommand();

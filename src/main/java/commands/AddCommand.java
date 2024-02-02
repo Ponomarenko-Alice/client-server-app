@@ -4,14 +4,12 @@ import client.Product;
 import server.CollectionController;
 import utils.Validator;
 
-import java.awt.desktop.ScreenSleepEvent;
 import java.io.Serializable;
 import java.util.Scanner;
 
 public class AddCommand implements Command, Serializable {
     private final CommandName name = CommandName.ADD;
     private CollectionController collectionController;
-    private Scanner scanner;
 
     private String[] params;
 
@@ -23,9 +21,9 @@ public class AddCommand implements Command, Serializable {
         this.params = params;
     }
 
-    public AddCommand(CollectionController collectionController, Scanner scanner) {
+    public AddCommand(CollectionController collectionController) {
         this.collectionController = collectionController;
-        this.scanner = scanner;
+
     }
 
     public String getDescription() {
@@ -44,7 +42,8 @@ public class AddCommand implements Command, Serializable {
     private Product createNewProduct() {
         System.out.println("Enter name of new product:");
         String name;
-        if (this.scanner.hasNext()) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNext()) {
             name = scanner.nextLine();
             if (Validator.validateCommandName(name)) {
                 return new Product(name);

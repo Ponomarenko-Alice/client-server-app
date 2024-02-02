@@ -7,15 +7,11 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public final class CommandSetController implements Serializable {
-
-
     private static CommandSetController INSTANCE;
-    private static Scanner scanner = new Scanner(System.in); // not local variable to be able to serialize
-
     private CommandSetController(CollectionController collectionController) {
         commandSet.put("info", new InfoCommand(this));
         commandSet.put("remove_by_id", new RemoveById(collectionController));
-        commandSet.put(CommandName.ADD.getCommandName(), new AddCommand(collectionController, scanner));
+        commandSet.put(CommandName.ADD.getCommandName(), new AddCommand(collectionController));
     }
 
     public static CommandSetController getInstance() {
@@ -26,8 +22,6 @@ public final class CommandSetController implements Serializable {
     }
 
     private final HashMap<String, Command> commandSet = new HashMap<>();
-
-
 
     public HashMap<String, Command> getCommandSet() {
         return this.commandSet;
